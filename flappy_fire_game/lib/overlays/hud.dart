@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-
+import 'package:n11game/overlays/timer.dart';
 import '../ember_quest.dart';
 import 'heart.dart';
 
@@ -16,6 +16,7 @@ class Hud extends PositionComponent with HasGameReference<EmberQuestGame> {
   });
 
   late TextComponent _scoreTextComponent;
+  late GameTimer _gameTimer;
 
   @override
   Future<void> onLoad() async {
@@ -31,6 +32,11 @@ class Hud extends PositionComponent with HasGameReference<EmberQuestGame> {
       position: Vector2(game.size.x - 60, 20),
     );
     add(_scoreTextComponent);
+
+    _gameTimer = GameTimer(
+      position: Vector2(game.size.x - 100, 50),
+    );
+    add(_gameTimer);
 
     final starSprite = await game.loadSprite('star.png');
     add(

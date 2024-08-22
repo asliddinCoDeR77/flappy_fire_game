@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 
 import 'actors/actors.dart';
@@ -15,7 +16,10 @@ class EmberQuestGame extends FlameGame
   double objectSpeed = 0.0;
   late EmberPlayer _ember;
   int starsCollected = 0;
-  int health = 4;
+  double timer = 0;
+  double countdownTimer = 60;
+  int health = 3;
+  bool gameActive = true;
 
   @override
   Future<void> onLoad() async {
@@ -29,13 +33,17 @@ class EmberQuestGame extends FlameGame
       'water_enemy.png',
     ]);
 
+    await FlameAudio.audioCache.loadAll([
+      'jump.mp3',
+      'star_collect.mp3',
+    ]);
+
     camera.viewfinder.anchor = Anchor.topLeft;
     camera.viewport.add(Hud());
     initializeGame(true);
   }
 
   void initializeGame(bool loadHud) {
-    // Assume that size.x < 3200
     final segmentsToLoad = (size.x / 320).ceil();
     segmentsToLoad.clamp(0, segments.length);
 
@@ -87,11 +95,50 @@ class EmberQuestGame extends FlameGame
 
   void reset() {
     starsCollected = 0;
+    timer = 0;
+    countdownTimer = 60;
     health = 4;
+    gameActive = true;
     initializeGame(false);
   }
 
+  void collectStar() {
+    if (!gameActive) return;
+
+    starsCollected += 0;
+    FlameAudio.play('star_collect.mp3');
+
+    if (starsCollected >= 5) {
+      gameOver();
+    }
+  }
+
+  void gameOver() {
+    gameActive = false;
+    overlays.add('GameOver');
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    if (!gameActive) return;
+
+    timer += dt;
+
+    countdownTimer -= dt;
+    if (countdownTimer <= 0) {
+      gameOver();
+    }
+
+    if (health <= 0) {
+      gameOver();
+    }
+  }
+
   void movePlayer(Direction direction) {
+    if (!gameActive) return;
+
     switch (direction) {
       case Direction.left:
         _ember.horizontalDirection = -1;
@@ -103,23 +150,20 @@ class EmberQuestGame extends FlameGame
   }
 
   void jumpPlayer() {
+    if (!gameActive) return;
+
     _ember.hasJumped = true;
+    FlameAudio.play('jump.mp3');
   }
 
   void stopPlayer() {
+    if (!gameActive) return;
+
     _ember.horizontalDirection = 0;
   }
 
   @override
   Color backgroundColor() {
     return const Color.fromARGB(255, 173, 223, 247);
-  }
-
-  @override
-  void update(double dt) {
-    if (health <= 0) {
-      overlays.add('GameOver');
-    }
-    super.update(dt);
   }
 }

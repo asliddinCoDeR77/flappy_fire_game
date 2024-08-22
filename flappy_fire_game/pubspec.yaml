@@ -8,9 +8,11 @@ environment:
 
 dependencies:
   flame: ^1.18.0
+  flame_audio: ^2.10.2
   flutter:
     sdk: flutter
   flutter_joystick: ^0.2.1
+  udp: ^5.0.3
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +24,5 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/audio/jump.mp3
+    - assets/audio/star_collect.mp3

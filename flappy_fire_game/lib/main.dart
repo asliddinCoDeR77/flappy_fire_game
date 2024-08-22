@@ -8,7 +8,6 @@ import 'overlays/overlays.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set the preferred orientations to landscape only
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
@@ -26,5 +25,3 @@ void main() {
     ),
   );
 }
-
-// Todo - Kamera tezligi; Sakrash tezligi; Jostik qo'shish; Mobilga moslastirish
